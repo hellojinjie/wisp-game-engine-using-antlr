@@ -1,28 +1,54 @@
 <!DOCTYPE HTML>
 
 <html>
-<head>
-	<title>helloworld</title>
+    <head>
+        <title>helloworld</title>
 
-    <style type="text/css">
-        body {
-            background-color: #000;
-        }
-    </style>
+        <style type="text/css">
+            body {
+                /*background-color: #000;*/
+            }
+        </style>
 
-	<script type="text/javascript" src="antlr3-all.js"></script>
-	<script type="text/javascript" src="output/WispLexer.js"></script>
-	<script type="text/javascript" src="output/WispParser.js"></script>
+        <script type="text/javascript" src="antlr3-all.js"></script>
+        <script type="text/javascript" src="output/WispLexer.js"></script>
+        <script type="text/javascript" src="output/WispParser.js"></script>
 
-    <script type="text/javascript">
-        console.log("hello,world");
-        function start() {
-        
-        } 
-    </script>
+        <script type="text/javascript">
+            console.log("hello,world");
+            function printTree(root, indent) {
+                if(!root) return;
+                for(var i = 0; i < indent; i++) {
+                    document.getElementById("tree").innerHTML += ".&nbsp;";
+                }
+                var n = root.getChildCount();
+                if(n == 0) {
+                    document.getElementById("tree").innerHTML += "<span class=\"leaf\">" + root + "</span><br />";
+                }
+                else {
+                    document.getElementById("tree").innerHTML += root + "<br />";
+                }
+                for(i = 0; i < n; i++) {
+                    printTree(root.getChild(i), indent + 1);  
+                }
+            }
+            function start() {
+                var regex = "USE bloodmage AND ATTACK AND MOVE UP 4 STEPS AND ATTACK";
+                var lexer = new WispLexer(new org.antlr.runtime.ANTLRStringStream(regex));
+                var parser = new WispParser(new org.antlr.runtime.CommonTokenStream(lexer));
+                //var root = parser.parse().getTree();
+                var root = parser.statement().getTree();
+                printTree(root, 0);       
+            } 
+</script>
 
 </head>
 
-<body onload="start()"></body>
+<body onload="start()">
+    <div id="tree">
+
+    </div>
+
+</body>
 
 </html>

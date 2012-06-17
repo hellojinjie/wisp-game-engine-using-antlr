@@ -2,9 +2,8 @@ grammar Wisp;
 
 options
 {
-    ASTLabelType=CommonTree;
     output=AST;
-    backtrack=false;
+    ASTLabelType=CommonTree;
     //language=JavaScript;
 }
 
@@ -20,26 +19,29 @@ tokens
 	TOK_AND;
 }
 
+statement
+	:	command EOF
+	;
+	
 command
-	: use 
+	: attack
+	| use
 	| move
-	| attack
 	| ( use | move | attack ) ( KW_AND ( move | attack ) )+
 	;
 
-use	
-	: KW_USE name=Identifier
+use	: KW_USE name=Identifier
 		-> ^(TOK_USE $name)
-	;	
+	;
 
 move
-	: KW_MOVE ( KW_DOWN | KW_UP | KW_LEFT | KW_RIGHT ) 
-		num=Integer ( KW_STEP | KW_STEPS)
-		-> ^(TOK_MOVE TOK_UP? TOK_DOWN? TOK_LEFT? TOK_RIGHT? $num)
+	: KW_MOVE ( KW_DOWN | KW_UP | KW_LEFT | KW_RIGHT ) stepnum=Integer ( KW_STEP | KW_STEPS )
+		-> ^(TOK_MOVE KW_DOWN? KW_UP? KW_LEFT? KW_RIGHT? $stepnum)
 	;
 	
 attack
-	: KW_ATTACK KW_AND
+	: KW_ATTACK 
+		-> ^( TOK_ATTACK )
 	;
 
 KW_USE	: 'USE';
@@ -53,6 +55,7 @@ KW_STEP: 'STEP';
 KW_STEPS: 'STEPS';
 KW_ATTACK: 'ATTACK';
 
+
 WS  :  (' '|'\r'|'\t'|'\n') {$channel=HIDDEN;}
     ;
 
@@ -60,7 +63,7 @@ COMMENT
 	: '--' (~('\n'|'\r'))*
 	  { $channel=HIDDEN; }
 	;
-  
+
 fragment
 Letter
     : 'a'..'z' | 'A'..'Z'
