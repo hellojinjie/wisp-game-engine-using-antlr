@@ -64,7 +64,7 @@ wisp.engine = function(){
                         var child = scene.getChildAt(i);
                         if (child != bloodmage) {
                             var xDistant = child.getPosition().x - bloodmage.getPosition().x;
-                            if (attackRange - 10 < xDistant && xDistant < attackRange + 10) {
+                            if (attackRange - 15 < xDistant && xDistant < attackRange + 15) {
                                 if (Math.abs(child.getPosition().y- bloodmage.getPosition().y) < 30) {
                                     engine.explosion(scene, child);
                                 }
