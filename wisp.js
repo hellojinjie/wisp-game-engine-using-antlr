@@ -3,14 +3,11 @@ goog.provide('wisp');
 //get requirements
 goog.require('lime.Director');
 goog.require('lime.Scene');
-goog.require('lime.Layer');
-goog.require('lime.Circle');
-goog.require('lime.Label');
-goog.require('lime.animation.Spawn');
-goog.require('lime.animation.FadeTo');
-goog.require('lime.animation.ScaleTo');
-goog.require('lime.animation.MoveTo');
+goog.require('lime.Sprite');
 goog.require('lime.animation.MoveBy');
+goog.require('lime.animation.ScaleTo');
+goog.require('lime.animation.FadeTo');
+goog.require('lime.animation.Sequence');
 
 // RPG Game Engine: Wisp
 wisp.engine = function(){
@@ -37,6 +34,7 @@ wisp.engine = function(){
     });
 
     this.execute = function(command) {
+        var engine = this;
         var lexer = new WispLexer(new org.antlr.runtime.ANTLRStringStream(command));
         var parser = new WispParser(new org.antlr.runtime.CommonTokenStream(lexer));
         var root = parser.statement().getTree();
@@ -58,9 +56,21 @@ wisp.engine = function(){
                 var fireball = new lime.Sprite().setSize(15, 15).setFill('images/fireball.jpg') 
                     .setPosition(x, y);
                 scene.appendChild(fireball);
-                var fire = new lime.animation.MoveBy(150, 0).setDuration(0.4);
+                var attackRange = 150;
+                var fire = new lime.animation.MoveBy(attackRange, 0).setDuration(0.4);
                 goog.events.listen(fire, lime.animation.Event.STOP, function() {
                     scene.removeChild(fireball);
+                    for (var i = 0; i < scene.getNumberOfChildren(); i++) {
+                        var child = scene.getChildAt(i);
+                        if (child != bloodmage) {
+                            var xDistant = child.getPosition().x - bloodmage.getPosition().x;
+                            if (attackRange - 10 < xDistant && xDistant < attackRange + 10) {
+                                if (Math.abs(child.getPosition().y- bloodmage.getPosition().y) < 30) {
+                                    engine.explosion(scene, child);
+                                }
+                            }
+                        }
+                    }
                 });
                 fireball.runAction(fire);
             }, scene, 800);
@@ -89,11 +99,22 @@ wisp.engine = function(){
                 bloodmage.setFill('images/bloodmage_static.gif');
             });
         }
-        
+    };
+
+    this.explosion = function(scene, node) {
+        node.setFill('images/explosion.jpg').setScale(0.1);
+        var explode = new lime.animation.Sequence(
+            new lime.animation.ScaleTo(2).setDuration(0.3),
+            new lime.animation.FadeTo(0)
+        );
+        explode.addTarget(node);
+        explode.play();
+        goog.events.listen(explode, lime.animation.Event.STOP, function() {
+            scene.removeChild(node);
+        });
     };
 
     // set current scene active
     director.replaceScene(scene);
 }
-
 
