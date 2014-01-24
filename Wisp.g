@@ -4,7 +4,7 @@ options
 {
     output=AST;
     ASTLabelType=CommonTree;
-    //language=JavaScript;
+    language=JavaScript;
 }
 
 tokens

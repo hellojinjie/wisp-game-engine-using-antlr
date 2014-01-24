@@ -1,6 +1,8 @@
 //set main namespace
 goog.provide('helloworld');
 
+goog.require("wisp.engine")
+
 // entrypoint
 helloworld.start = function() {
 
