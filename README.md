@@ -10,3 +10,7 @@
 
 游戏截图
 ![游戏截图](https://raw.github.com/hellojinjie/wisp-game-engine-using-antlr/master/screenshot.png)
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/hellojinjie/wisp-game-engine-using-antlr/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
